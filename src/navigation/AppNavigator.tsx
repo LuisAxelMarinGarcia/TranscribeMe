@@ -9,13 +9,18 @@ import JoinTranscriptionScreen from '../screens/JoinTranscription';
 import Archivo from '../screens/Archivo';
 import Create from '../screens/Create';
 import SolicitudesBajas from '../screens/SolicitudesBajas';
-import LoginReg from '../screens/LoginReg'; // Importing Login Screen
-import RegisterScreen from '../screens/RegisterScreen'; // Importing Register Screen
+import LoginReg from '../screens/LoginReg';
+import RegisterScreen from '../screens/RegisterScreen';
 
 export type RootStackParamList = {
   LoginReg: undefined;
   Home: undefined;
-  ViewTranscriptions: { className: string };
+  ViewTranscriptions: { 
+    className: string; 
+    teacherName: string; 
+    classCode: string; // Cambiado de classId a classCode
+    numberOfStudents: number;
+  };
   StartTranscription: undefined;
   AvisoPrivacidad: undefined;
   JoinClass: undefined;

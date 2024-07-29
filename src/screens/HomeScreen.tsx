@@ -104,7 +104,14 @@ const HomeScreen = (): React.JSX.Element => {
         <Text style={styles.title}>Materias</Text>
         {courses.map((course, index) => (
           <View key={index} style={styles.courseCard}>
-            <TouchableOpacity onPress={() => navigation.navigate('ViewTranscriptions', { className: course.name })}>
+            <TouchableOpacity 
+              onPress={() => navigation.navigate('ViewTranscriptions', { 
+                className: course.name, 
+                teacherName: course.teacher, 
+                classCode: course.code, // Usar 'code' en lugar de 'id'
+                numberOfStudents: course.number_of_students 
+              })}
+            >
               <Text style={styles.courseTitle}>{course.grade}B - {course.name}</Text>
               <Text style={styles.instructor}>{course.teacher}</Text>
               <View style={styles.courseFooter}>

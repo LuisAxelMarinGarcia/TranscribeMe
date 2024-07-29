@@ -1,6 +1,6 @@
 import React from 'react';
-import { ScrollView, View, Text, TouchableOpacity, Image } from 'react-native';
-import { useNavigation, RouteProp } from '@react-navigation/native';
+import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -35,7 +35,7 @@ const transcriptions = [
 ];
 
 const ViewTranscriptionsScreen = ({ route, navigation }: Props): React.JSX.Element => {
-  const { className } = route.params;
+  const { className, teacherName, classCode, numberOfStudents } = route.params;
 
   return (
     <LinearGradient colors={['#5E9CFA', '#8A2BE2']} style={styles.container}>
@@ -43,17 +43,19 @@ const ViewTranscriptionsScreen = ({ route, navigation }: Props): React.JSX.Eleme
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.classInfoContainer}>
           <Text style={styles.classTitle}>{className}</Text>
-          <Text style={styles.classSubtitle}>Instructor: {transcriptions[0].author}</Text>
+          <Text style={styles.classSubtitle}>Instructor: {teacherName}</Text>
+          <Text style={styles.classSubtitle}>Código de la clase: {classCode}</Text>
           <View style={styles.classDetails}>
             <Icon name="users" size={20} color="white" />
-            <Text style={[styles.classSubtitle, { marginLeft: 5 }]}>Número de estudiantes</Text>
-            <View style={styles.classCodeContainer}>
-              <Text style={styles.classCode}>Código de la clase</Text>
-            </View>
+            <Text style={[styles.classSubtitle, { marginLeft: 5 }]}>{numberOfStudents} estudiantes</Text>
           </View>
         </View>
         {transcriptions.map((transcription, index) => (
-          <TouchableOpacity key={index} style={styles.transcriptCard} onPress={() => navigation.navigate('StartTranscription')}>
+          <TouchableOpacity 
+            key={index} 
+            style={styles.transcriptCard} 
+            onPress={() => navigation.navigate('StartTranscription')}
+          >
             <View style={styles.transcriptTextContainer}>
               <Text style={styles.transcriptTitle}>{transcription.title}</Text>
               <Text style={styles.transcriptSubtitle}>{transcription.author}</Text>
