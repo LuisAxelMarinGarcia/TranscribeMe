@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, Image } from 'react-native';
-import { RouteProp, useNavigation } from '@react-navigation/native';
+import { SafeAreaView, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import Voice, { SpeechErrorEvent, SpeechResultsEvent } from '@react-native-community/voice';
 import LinearGradient from 'react-native-linear-gradient';
@@ -49,7 +49,12 @@ const StartTranscriptionScreen = ({ route, navigation }: Props) => {
   };
 
   const onSpeechResults = (e: SpeechResultsEvent) => {
-    setResults(e.value || []);
+    const speechResults = e.value ?? []; // Asegurar que speechResults sea un array
+    setResults(prevResults => {
+      // Verificar duplicados y añadir nuevos resultados
+      const newResults = speechResults.filter(result => !prevResults.includes(result));
+      return [...prevResults, ...newResults];
+    });
   };
 
   const handleStartListening = async () => {
@@ -83,13 +88,13 @@ const StartTranscriptionScreen = ({ route, navigation }: Props) => {
           <Text style={styles.liveText}>• En Vivo</Text>
         </View>
         <Image source={require('../../assets/voice-recorder.png')} style={styles.recorderImage} />
-        <View style={styles.transcriptionBox}>
+        <ScrollView style={styles.transcriptionBox}>
           {results.map((result, index) => (
             <Text key={index} style={styles.resultText}>
               {result}
             </Text>
           ))}
-        </View>
+        </ScrollView>
         <View style={styles.buttonsContainer}>
           <TouchableOpacity
             style={styles.startButton}
