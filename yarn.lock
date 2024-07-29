@@ -1598,6 +1598,11 @@
   dependencies:
     "@babel/types" "^7.20.7"
 
+"@types/fast-levenshtein@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.npmjs.org/@types/fast-levenshtein/-/fast-levenshtein-0.0.4.tgz"
+  integrity sha512-tkDveuitddQCxut1Db8eEFfMahTjOumTJGPHmT9E7KUH+DkVq9WTpVvlfenf3S+uCBeu8j5FP2xik/KfxOEjeA==
+
 "@types/graceful-fs@^4.1.3":
   version "4.1.9"
   dependencies:

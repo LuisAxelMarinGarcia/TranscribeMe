@@ -8,6 +8,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import styles from '../styles/StartTranscriptionStyles';
 import { RootStackParamList } from '../navigation/AppNavigator';
+import levenshtein from 'fast-levenshtein';
 
 type StartTranscriptionScreenNavigationProp = StackNavigationProp<RootStackParamList, 'StartTranscription'>;
 type StartTranscriptionScreenRouteProp = RouteProp<RootStackParamList, 'StartTranscription'>;
@@ -23,46 +24,63 @@ const StartTranscriptionScreen = ({ route, navigation }: Props) => {
   const { className, teacherName } = route.params;
 
   useEffect(() => {
+    const onSpeechStart = () => {
+      console.log('Speech start');
+      setIsListening(true);
+    };
+    const onSpeechEnd = () => {
+      console.log('Speech end');
+      setIsListening(false);
+    };
+    const onSpeechError = (e: SpeechErrorEvent) => {
+      console.error('Speech error:', e.error);
+      setIsListening(false);
+    };
+    const onSpeechResults = (e: SpeechResultsEvent) => {
+      console.log('Speech results event:', e);
+      const speechResults = e.value ?? [];
+      setResults(prevResults => {
+        console.log('Previous results:', prevResults);
+        // Filtrar resultados similares y seleccionar el más representativo
+        const newResults = speechResults.filter((result) => {
+          const similarExists = prevResults.some(prevResult => areSimilar(prevResult, result));
+          return !similarExists;
+        });
+        
+        console.log('New results:', newResults);
+        return [...prevResults, ...newResults];
+      });
+    };
+
+    // Asignar los eventos de Voice
     Voice.onSpeechStart = onSpeechStart;
     Voice.onSpeechEnd = onSpeechEnd;
     Voice.onSpeechError = onSpeechError;
     Voice.onSpeechResults = onSpeechResults;
 
+    // Limpieza de eventos al desmontar el componente
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
     };
   }, []);
 
-  const onSpeechStart = () => {
-    setIsListening(true);
-  };
-
-  const onSpeechEnd = () => {
-    setIsListening(false);
-  };
-
-  const onSpeechError = (e: SpeechErrorEvent) => {
-    if (e.error) {
-      console.error('Error en reconocimiento de voz: ', e.error.message || 'Unknown error');
-    }
-    setIsListening(false);
-  };
-
-  const onSpeechResults = (e: SpeechResultsEvent) => {
-    const speechResults = e.value ?? []; // Asegurar que speechResults sea un array
-    setResults(prevResults => {
-      // Verificar duplicados y añadir nuevos resultados
-      const newResults = speechResults.filter(result => !prevResults.includes(result));
-      return [...prevResults, ...newResults];
-    });
+  const normalizeText = (text: string) => text.trim().toLowerCase().replace(/[^a-z0-9]/gi, '');
+  
+  const areSimilar = (str1: string, str2: string) => {
+    const normalized1 = normalizeText(str1);
+    const normalized2 = normalizeText(str2);
+    const distance = levenshtein.get(normalized1, normalized2);
+    const longerLength = Math.max(normalized1.length, normalized2.length);
+    return distance / longerLength < 0.25; // Considera similar si el 25% o menos de los caracteres son diferentes
   };
 
   const handleStartListening = async () => {
     try {
       await Voice.start('es-ES');
       setIsListening(true);
+      console.log('Listening started');
     } catch (error) {
-      console.error('Error al iniciar el reconocimiento de voz:', error);
+      console.error('Error starting listening:', error);
       setIsListening(false);
     }
   };
@@ -71,8 +89,9 @@ const StartTranscriptionScreen = ({ route, navigation }: Props) => {
     try {
       await Voice.stop();
       setIsListening(false);
+      console.log('Listening stopped');
     } catch (error) {
-      console.error('Error al detener el reconocimiento de voz:', error);
+      console.error('Error stopping listening:', error);
     }
   };
 
@@ -89,11 +108,15 @@ const StartTranscriptionScreen = ({ route, navigation }: Props) => {
         </View>
         <Image source={require('../../assets/voice-recorder.png')} style={styles.recorderImage} />
         <ScrollView style={styles.transcriptionBox}>
-          {results.map((result, index) => (
-            <Text key={index} style={styles.resultText}>
-              {result}
-            </Text>
-          ))}
+          {results.length > 0 ? (
+            results.map((result, index) => (
+              <Text key={index} style={styles.resultText}>
+                {result}
+              </Text>
+            ))
+          ) : (
+            <Text style={styles.resultText}>No results</Text>
+          )}
         </ScrollView>
         <View style={styles.buttonsContainer}>
           <TouchableOpacity
