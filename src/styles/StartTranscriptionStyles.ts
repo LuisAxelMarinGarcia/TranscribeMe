@@ -60,32 +60,33 @@ export default StyleSheet.create({
   buttonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    width: '60%',
+    width: '100%',
+    paddingHorizontal: 20,
     marginBottom: 20,
+  },
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    marginHorizontal: 5,
   },
   startButton: {
     backgroundColor: '#007bff',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    alignItems: 'center',
   },
   stopButton: {
     backgroundColor: '#ff0000',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    alignItems: 'center',
   },
-  startButtonText: {
+  saveButton: {
+    backgroundColor: '#28a745',
+  },
+  buttonText: {
     fontFamily: 'K2D',
     fontSize: 16,
     color: 'white',
-  },
-  stopButtonText: {
-    fontFamily: 'K2D',
-    fontSize: 16,
-    color: 'white',
+    marginLeft: 5,
   },
   resultText: {
     fontFamily: 'K2D',

@@ -9,6 +9,8 @@ import Footer from '../components/Footer';
 import styles from '../styles/StartTranscriptionStyles';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import levenshtein from 'fast-levenshtein';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 type StartTranscriptionScreenNavigationProp = StackNavigationProp<RootStackParamList, 'StartTranscription'>;
 type StartTranscriptionScreenRouteProp = RouteProp<RootStackParamList, 'StartTranscription'>;
@@ -41,24 +43,20 @@ const StartTranscriptionScreen = ({ route, navigation }: Props) => {
       const speechResults = e.value ?? [];
       setResults(prevResults => {
         console.log('Previous results:', prevResults);
-        // Filtrar resultados similares y seleccionar el más representativo
         const newResults = speechResults.filter((result) => {
           const similarExists = prevResults.some(prevResult => areSimilar(prevResult, result));
           return !similarExists;
         });
-        
         console.log('New results:', newResults);
         return [...prevResults, ...newResults];
       });
     };
 
-    // Asignar los eventos de Voice
     Voice.onSpeechStart = onSpeechStart;
     Voice.onSpeechEnd = onSpeechEnd;
     Voice.onSpeechError = onSpeechError;
     Voice.onSpeechResults = onSpeechResults;
 
-    // Limpieza de eventos al desmontar el componente
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
     };
@@ -71,7 +69,7 @@ const StartTranscriptionScreen = ({ route, navigation }: Props) => {
     const normalized2 = normalizeText(str2);
     const distance = levenshtein.get(normalized1, normalized2);
     const longerLength = Math.max(normalized1.length, normalized2.length);
-    return distance / longerLength < 0.25; // Considera similar si el 25% o menos de los caracteres son diferentes
+    return distance / longerLength < 0.25;
   };
 
   const handleStartListening = async () => {
@@ -120,18 +118,27 @@ const StartTranscriptionScreen = ({ route, navigation }: Props) => {
         </ScrollView>
         <View style={styles.buttonsContainer}>
           <TouchableOpacity
-            style={styles.startButton}
+            style={[styles.button, styles.startButton]}
             onPress={handleStartListening}
             disabled={isListening}
           >
-            <Text style={styles.startButtonText}>Comenzar</Text>
+            <FontAwesome name="microphone" size={20} color="white" />
+            <Text style={styles.buttonText}>Comenzar</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.stopButton}
+            style={[styles.button, styles.stopButton]}
             onPress={handleStopListening}
             disabled={!isListening}
           >
-            <Text style={styles.stopButtonText}>Detener</Text>
+            <FontAwesome name="microphone-slash" size={20} color="white" />
+            <Text style={styles.buttonText}>Detener</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.saveButton]}
+            onPress={() => { /* Funcionalidad de guardado futura */ }}
+          >
+            <MaterialIcons name="save" size={20} color="white" />
+            <Text style={styles.buttonText}>Guardar</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
