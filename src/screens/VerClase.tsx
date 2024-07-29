@@ -54,7 +54,10 @@ const ViewTranscriptionsScreen = ({ route, navigation }: Props): React.JSX.Eleme
           <TouchableOpacity 
             key={index} 
             style={styles.transcriptCard} 
-            onPress={() => navigation.navigate('StartTranscription')}
+            onPress={() => navigation.navigate('StartTranscription', {
+              className,
+              teacherName,
+            })}
           >
             <View style={styles.transcriptTextContainer}>
               <Text style={styles.transcriptTitle}>{transcription.title}</Text>
@@ -71,7 +74,10 @@ const ViewTranscriptionsScreen = ({ route, navigation }: Props): React.JSX.Eleme
         ))}
         <TouchableOpacity 
           style={styles.transcriptionButton}
-          onPress={() => navigation.navigate('StartTranscription')}
+          onPress={() => navigation.navigate('StartTranscription', {
+            className,
+            teacherName,
+          })}
         >
           <Text style={styles.transcriptionButtonText}>Iniciar Transcripción</Text>
         </TouchableOpacity>

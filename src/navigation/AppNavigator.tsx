@@ -18,10 +18,13 @@ export type RootStackParamList = {
   ViewTranscriptions: { 
     className: string; 
     teacherName: string; 
-    classCode: string; // Cambiado de classId a classCode
+    classCode: string; 
     numberOfStudents: number;
   };
-  StartTranscription: undefined;
+  StartTranscription: { 
+    className: string; 
+    teacherName: string; 
+  }; // Definir los parámetros para StartTranscription
   AvisoPrivacidad: undefined;
   JoinClass: undefined;
   JoinTranscription: undefined;

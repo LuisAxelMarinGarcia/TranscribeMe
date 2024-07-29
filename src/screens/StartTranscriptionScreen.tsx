@@ -1,19 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView, View, Text, TouchableOpacity, Image } from 'react-native';
-import Voice, {
-  SpeechErrorEvent,
-  SpeechResultsEvent,
-  SpeechStartEvent,
-  SpeechEndEvent,
-} from '@react-native-community/voice';
+import { RouteProp, useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import Voice, { SpeechErrorEvent, SpeechResultsEvent } from '@react-native-community/voice';
 import LinearGradient from 'react-native-linear-gradient';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import styles from '../styles/StartTranscriptionStyles';
+import { RootStackParamList } from '../navigation/AppNavigator';
 
-const StartTranscriptionScreen = () => {
+type StartTranscriptionScreenNavigationProp = StackNavigationProp<RootStackParamList, 'StartTranscription'>;
+type StartTranscriptionScreenRouteProp = RouteProp<RootStackParamList, 'StartTranscription'>;
+
+type Props = {
+  route: StartTranscriptionScreenRouteProp;
+  navigation: StartTranscriptionScreenNavigationProp;
+};
+
+const StartTranscriptionScreen = ({ route, navigation }: Props) => {
   const [isListening, setIsListening] = useState(false);
   const [results, setResults] = useState<string[]>([]);
+  const { className, teacherName } = route.params;
 
   useEffect(() => {
     Voice.onSpeechStart = onSpeechStart;
@@ -26,11 +33,11 @@ const StartTranscriptionScreen = () => {
     };
   }, []);
 
-  const onSpeechStart = (e: SpeechStartEvent) => {
+  const onSpeechStart = () => {
     setIsListening(true);
   };
 
-  const onSpeechEnd = (e: SpeechEndEvent) => {
+  const onSpeechEnd = () => {
     setIsListening(false);
   };
 
@@ -69,9 +76,10 @@ const StartTranscriptionScreen = () => {
       <Header />
       <SafeAreaView style={styles.content}>
         <Text style={styles.courseTitle}>Transcripción en Vivo</Text>
+        <Text style={styles.courseTitle}>{className}</Text>
         <View style={styles.instructorContainer}>
           <Image source={require('../../assets/instructor1.png')} style={styles.instructorImage} />
-          <Text style={styles.instructorName}>Nombre del Instructor</Text>
+          <Text style={styles.instructorName}>{teacherName}</Text>
           <Text style={styles.liveText}>• En Vivo</Text>
         </View>
         <Image source={require('../../assets/voice-recorder.png')} style={styles.recorderImage} />
