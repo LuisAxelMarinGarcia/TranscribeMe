@@ -20,11 +20,13 @@ export type RootStackParamList = {
     teacherName: string; 
     classCode: string; 
     numberOfStudents: number;
+    classId: string; // Agregado classId aquí
   };
   StartTranscription: { 
     className: string; 
     teacherName: string; 
-  }; // Definir los parámetros para StartTranscription
+    classId: string; // Agregado classId aquí
+  };
   AvisoPrivacidad: undefined;
   JoinClass: undefined;
   JoinTranscription: undefined;

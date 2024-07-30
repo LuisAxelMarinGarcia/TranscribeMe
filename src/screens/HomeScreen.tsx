@@ -109,7 +109,8 @@ const HomeScreen = (): React.JSX.Element => {
                 className: course.name, 
                 teacherName: course.teacher, 
                 classCode: course.code, // Usar 'code' en lugar de 'id'
-                numberOfStudents: course.number_of_students 
+                numberOfStudents: course.number_of_students,
+                classId: course.id, // Añadir ID de la clase
               })}
             >
               <Text style={styles.courseTitle}>{course.grade}B - {course.name}</Text>

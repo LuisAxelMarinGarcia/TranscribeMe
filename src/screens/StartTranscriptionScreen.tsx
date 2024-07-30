@@ -23,15 +23,13 @@ type Props = {
 const StartTranscriptionScreen = ({ route, navigation }: Props) => {
   const [isListening, setIsListening] = useState(false);
   const [results, setResults] = useState<string[]>([]);
-  const { className, teacherName } = route.params;
+  const { className, teacherName, classId } = route.params;
 
   useEffect(() => {
     const onSpeechStart = () => {
-      console.log('Speech start');
       setIsListening(true);
     };
     const onSpeechEnd = () => {
-      console.log('Speech end');
       setIsListening(false);
     };
     const onSpeechError = (e: SpeechErrorEvent) => {
@@ -39,15 +37,12 @@ const StartTranscriptionScreen = ({ route, navigation }: Props) => {
       setIsListening(false);
     };
     const onSpeechResults = (e: SpeechResultsEvent) => {
-      console.log('Speech results event:', e);
       const speechResults = e.value ?? [];
       setResults(prevResults => {
-        console.log('Previous results:', prevResults);
         const newResults = speechResults.filter((result) => {
           const similarExists = prevResults.some(prevResult => areSimilar(prevResult, result));
           return !similarExists;
         });
-        console.log('New results:', newResults);
         return [...prevResults, ...newResults];
       });
     };
@@ -76,7 +71,6 @@ const StartTranscriptionScreen = ({ route, navigation }: Props) => {
     try {
       await Voice.start('es-ES');
       setIsListening(true);
-      console.log('Listening started');
     } catch (error) {
       console.error('Error starting listening:', error);
       setIsListening(false);
@@ -87,7 +81,6 @@ const StartTranscriptionScreen = ({ route, navigation }: Props) => {
     try {
       await Voice.stop();
       setIsListening(false);
-      console.log('Listening stopped');
     } catch (error) {
       console.error('Error stopping listening:', error);
     }
@@ -101,8 +94,10 @@ const StartTranscriptionScreen = ({ route, navigation }: Props) => {
         <Text style={styles.courseTitle}>{className}</Text>
         <View style={styles.instructorContainer}>
           <Image source={require('../../assets/instructor1.png')} style={styles.instructorImage} />
-          <Text style={styles.instructorName}>{teacherName}</Text>
-          <Text style={styles.liveText}>• En Vivo</Text>
+          <View>
+            <Text style={styles.instructorName}>{teacherName}</Text>
+            <Text style={styles.instructorName}>ID de la clase: {classId}</Text>
+          </View>
         </View>
         <Image source={require('../../assets/voice-recorder.png')} style={styles.recorderImage} />
         <ScrollView style={styles.transcriptionBox}>

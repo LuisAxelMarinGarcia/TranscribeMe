@@ -35,7 +35,7 @@ const transcriptions = [
 ];
 
 const ViewTranscriptionsScreen = ({ route, navigation }: Props): React.JSX.Element => {
-  const { className, teacherName, classCode, numberOfStudents } = route.params;
+  const { className, teacherName, classCode, numberOfStudents, classId } = route.params;
 
   return (
     <LinearGradient colors={['#5E9CFA', '#8A2BE2']} style={styles.container}>
@@ -57,6 +57,7 @@ const ViewTranscriptionsScreen = ({ route, navigation }: Props): React.JSX.Eleme
             onPress={() => navigation.navigate('StartTranscription', {
               className,
               teacherName,
+              classId, // Asegurarse de pasar classId aquí
             })}
           >
             <View style={styles.transcriptTextContainer}>
@@ -77,6 +78,7 @@ const ViewTranscriptionsScreen = ({ route, navigation }: Props): React.JSX.Eleme
           onPress={() => navigation.navigate('StartTranscription', {
             className,
             teacherName,
+            classId, // Asegurarse de pasar classId aquí
           })}
         >
           <Text style={styles.transcriptionButtonText}>Iniciar Transcripción</Text>
