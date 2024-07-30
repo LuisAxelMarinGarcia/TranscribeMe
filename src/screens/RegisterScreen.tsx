@@ -68,22 +68,22 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     const sanitizedPassword = password.trim();
     const sanitizedName = sanitizeInput(name).trim();
     const sanitizedSurname = sanitizeInput(surname).trim();
-
+  
     if (!validateEmail(sanitizedEmail)) {
       Alert.alert("Error en el registro", "Correo electrónico inválido");
       return;
     }
-
+  
     if (!validatePasswordStrength(sanitizedPassword)) {
       Alert.alert("Error en el registro", "La contraseña debe tener entre 6 y 20 caracteres, incluyendo al menos una letra mayúscula, una letra minúscula y un número");
       return;
     }
-
+  
     if (sanitizedName === "" || sanitizedSurname === "") {
       Alert.alert("Error en el registro", "El nombre y el apellido no pueden estar vacíos");
       return;
     }
-
+  
     try {
       console.log("Iniciando registro...");
       const formData = new FormData();
@@ -98,9 +98,9 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           type: profileImage.type || 'image/jpeg',
         } as any);
       }
-
+  
       console.log("Enviando datos:", formData);
-
+  
       const response = await fetch('https://transcribeme-usuarios.integrador.xyz:3003/users', {
         method: 'POST',
         headers: {
@@ -108,27 +108,26 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         },
         body: formData,
       });
-
+  
       console.log("Respuesta del servidor:", response);
-
-      const responseText = await response.text();
-      console.log("Texto de respuesta del servidor:", responseText);
-
+  
       if (response.ok) {
-        const responseData = JSON.parse(responseText);
+        const responseData = await response.json();
         console.log("Datos de respuesta:", responseData);
         setUser({ email: sanitizedEmail });
         Alert.alert("Registro exitoso", "Usuario registrado correctamente");
         navigation.navigate("LoginReg");
       } else {
+        const responseText = await response.text();
         console.log("Error en la respuesta:", responseText);
         Alert.alert("Error en el registro", "Hubo un problema al registrar el usuario");
       }
     } catch (error) {
       console.log("Error en el registro:", error);
-      Alert.alert("Error en el registro", "Hubo un problema al registrar el usuario");
+      Alert.alert("Error en el registro", "El registro se ha completado, pero hubo un problema con la conexión de red. Verifica si el usuario fue registrado correctamente.");
     }
   };
+  
 
   return (
     <LinearGradient colors={['#5E9CFA', '#8A2BE2']} style={tw`flex-1`}>
