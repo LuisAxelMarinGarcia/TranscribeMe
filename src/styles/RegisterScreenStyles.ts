@@ -1,3 +1,5 @@
+// styles/RegisterScreenStyles.js
+
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
@@ -114,5 +116,11 @@ export default StyleSheet.create({
     color: 'blue',
     textAlign: 'center',
     marginBottom: 10,
+  },
+  profileImage: { // Nuevo estilo añadido
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 20,
   },
 });
