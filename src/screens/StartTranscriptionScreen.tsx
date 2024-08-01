@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { RouteProp } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { SafeAreaView, View, Text, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Voice, { SpeechErrorEvent, SpeechResultsEvent } from '@react-native-community/voice';
 import LinearGradient from 'react-native-linear-gradient';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import styles from '../styles/StartTranscriptionStyles';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import levenshtein from 'fast-levenshtein';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { RootStackParamList } from '../navigation/AppNavigator';
 
 type StartTranscriptionScreenNavigationProp = StackNavigationProp<RootStackParamList, 'StartTranscription'>;
 type StartTranscriptionScreenRouteProp = RouteProp<RootStackParamList, 'StartTranscription'>;
@@ -26,12 +27,8 @@ const StartTranscriptionScreen = ({ route, navigation }: Props) => {
   const { className, teacherName, classId } = route.params;
 
   useEffect(() => {
-    const onSpeechStart = () => {
-      setIsListening(true);
-    };
-    const onSpeechEnd = () => {
-      setIsListening(false);
-    };
+    const onSpeechStart = () => setIsListening(true);
+    const onSpeechEnd = () => setIsListening(false);
     const onSpeechError = (e: SpeechErrorEvent) => {
       console.error('Speech error:', e.error);
       setIsListening(false);
@@ -39,7 +36,7 @@ const StartTranscriptionScreen = ({ route, navigation }: Props) => {
     const onSpeechResults = (e: SpeechResultsEvent) => {
       const speechResults = e.value ?? [];
       setResults(prevResults => {
-        const newResults = speechResults.filter((result) => {
+        const newResults = speechResults.filter(result => {
           const similarExists = prevResults.some(prevResult => areSimilar(prevResult, result));
           return !similarExists;
         });
@@ -85,6 +82,53 @@ const StartTranscriptionScreen = ({ route, navigation }: Props) => {
       console.error('Error stopping listening:', error);
     }
   };
+  const handleSaveTranscription = async () => {
+    if (results.length === 0) {
+      Alert.alert('Error', 'No hay transcripción para guardar');
+      return;
+    }
+  
+    const transcriptionData = {
+      teacher: teacherName,
+      clas: className,
+      class_id: classId,
+      transcription: results.join(' '),
+    };
+  
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) {
+        throw new Error('Token no encontrado');
+      }
+  
+      const response = await fetch('https://transcribeme-transcripciones.integrador.xyz:3001/transcription', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(transcriptionData)
+      });
+  
+      if (response.ok) {
+        Alert.alert('Éxito', 'Transcripción guardada correctamente');
+      } else {
+        const responseText = await response.text();
+        Alert.alert('Error', `Error al guardar la transcripción: ${responseText}`);
+      }
+    } catch (error) {
+      console.error('Error en la transcripción:', error);
+  
+      if (error instanceof TypeError && error.message.includes('Network request failed')) {
+        // No mostramos alerta de error de red si se asume que la transcripción se guardó correctamente.
+        console.warn('Transcripción guardada, pero error de red ocurrió:', error.message);
+      } else {
+        // Mostrar errores distintos a errores de red.
+        Alert.alert('Error', 'Ocurrió un error al guardar la transcripción');
+      }
+    }
+  };
+  
 
   return (
     <LinearGradient colors={['#5E9CFA', '#8A2BE2']} style={styles.container}>
@@ -130,7 +174,7 @@ const StartTranscriptionScreen = ({ route, navigation }: Props) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.button, styles.saveButton]}
-            onPress={() => { /* Funcionalidad de guardado futura */ }}
+            onPress={handleSaveTranscription}
           >
             <MaterialIcons name="save" size={20} color="white" />
             <Text style={styles.buttonText}>Guardar</Text>

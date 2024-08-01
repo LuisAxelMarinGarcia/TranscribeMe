@@ -1,18 +1,23 @@
 const fetch = require('node-fetch');
-const FormData = require('form-data');
 
 const testAPI = async () => {
-  const formData = new FormData();
-  formData.append('email', 'test69@example.com');
-  formData.append('password', 'Test1234');
-  formData.append('name', 'Test Name');
-  formData.append('surname', 'Test Surname');
+  const transcriptionData = {
+    teacher: "roberto@gmail.com",
+    clas: "soa",
+    class_id: "389e1eed-53c1-469f-a04c-e0947a296f3b",
+    transcription: "Hola esta es una transcripcion 2"
+  };
+
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE1NTUyOTc3LTIwZTctNDQ0Mi1hNzMzLWQxOTJjYmJkODhiMyIsImVtYWlsIjoianVsaWV0YUBnbWFpbC5jb20iLCJpYXQiOjE3MjI0MzY5NDUsImV4cCI6MTcyMjUyMzM0NX0.TNf1oA3XzojQh7fNm9WZ__ZMU-dkcV09t4Iql2OaSIA";
 
   try {
-    const response = await fetch('https://transcribeme-usuarios.integrador.xyz:3003/users', {
+    const response = await fetch('https://transcribeme-transcripciones.integrador.xyz:3001/transcription', {
       method: 'POST',
-      body: formData,
-      headers: formData.getHeaders(),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(transcriptionData)
     });
 
     const responseText = await response.text();
@@ -24,7 +29,7 @@ const testAPI = async () => {
       console.error("Error en la respuesta:", responseText);
     }
   } catch (error) {
-    console.error("Error en el registro:", error);
+    console.error("Error en la transcripción:", error);
   }
 };
 
