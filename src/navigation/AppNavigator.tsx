@@ -11,6 +11,7 @@ import Create from '../screens/Create';
 import SolicitudesBajas from '../screens/SolicitudesBajas';
 import LoginReg from '../screens/LoginReg';
 import RegisterScreen from '../screens/RegisterScreen';
+import VerTranscripciones from '../screens/VerTranscripciones'; // Asegúrate de que esta ruta sea correcta
 
 export type RootStackParamList = {
   LoginReg: undefined;
@@ -20,12 +21,12 @@ export type RootStackParamList = {
     teacherName: string; 
     classCode: string; 
     numberOfStudents: number;
-    classId: string; // Agregado classId aquí
+    classId: string;
   };
   StartTranscription: { 
     className: string; 
     teacherName: string; 
-    classId: string; // Agregado classId aquí
+    classId: string;
   };
   AvisoPrivacidad: undefined;
   JoinClass: undefined;
@@ -34,6 +35,9 @@ export type RootStackParamList = {
   Create: undefined;
   SolicitudesBajas: undefined;
   RegisterScreen: undefined;
+  VerTranscripciones: { 
+    transcript: any; // Especificar tipo según los datos
+  };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -52,6 +56,7 @@ const AppNavigator = (): React.JSX.Element => {
       <Stack.Screen name="Create" component={Create} />
       <Stack.Screen name="SolicitudesBajas" component={SolicitudesBajas} />
       <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+      <Stack.Screen name="VerTranscripciones" component={VerTranscripciones} />
     </Stack.Navigator>
   );
 };
