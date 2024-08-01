@@ -1,33 +1,35 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Modal, Image } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome'; 
-import styles from '../styles/CompartirQRStyles'; 
+import { View, Text, TouchableOpacity, Modal } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import QRCode from 'react-native-qrcode-svg';
+import styles from '../styles/CompartirQRStyles';
 
 type CompartirQRProps = {
   visible: boolean;
   onClose: () => void;
+  transcriptionData: any; // Cambia 'any' al tipo adecuado según tu modelo de datos
 };
 
-const CompartirQR: React.FC<CompartirQRProps> = ({ visible, onClose }) => {
+const CompartirQR: React.FC<CompartirQRProps> = ({ visible, onClose, transcriptionData }) => {
   return (
     <Modal
-      animationType="slide"
-      transparent={true}
       visible={visible}
+      transparent={true}
+      animationType="slide"
       onRequestClose={onClose}
     >
       <View style={styles.modalContainer}>
         <View style={styles.qrContainer}>
+          <Text style={styles.qrTitle}>Compartir Transcripción</Text>
+          <QRCode
+            value={JSON.stringify(transcriptionData)}
+            size={200}
+            color="black"
+            backgroundColor="white"
+          />
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Icon name="close" size={24} color="white" />
+            <Icon name="times" size={20} color="white" />
           </TouchableOpacity>
-          <Text style={styles.qrTitle}>Compartir QR de transcripción</Text>
-          <Image source={require('../../assets/qr-code.png')} style={styles.qrImage} />
-          <Text style={styles.qrDescription}>
-            Escanea este código QR para acceder a la transcripción completa
-          </Text>
-          <Text style={styles.qrAuthor}>Autor: Horacio Irán Solís Cisneros</Text>
-          <Text style={styles.qrDate}>Generado el: 12/06/2024</Text>
         </View>
       </View>
     </Modal>

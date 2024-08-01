@@ -8,7 +8,7 @@ import { RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import styles from '../styles/VerTranscripcionStyles';
 import { RootStackParamList } from '../navigation/AppNavigator';
-import CompartirQR from '../components/CompartirQR'; // Asegúrate de que la ruta sea correcta
+import CompartirQR from '../components/CompartirQR'; // Importación del componente
 
 type VerTranscripcionesScreenNavigationProp = StackNavigationProp<RootStackParamList, "VerTranscripciones">;
 type VerTranscripcionesRouteProp = RouteProp<RootStackParamList, "VerTranscripciones">;
@@ -44,7 +44,11 @@ const VerTranscripciones: React.FC<Props> = ({ route }) => {
         </TouchableOpacity>
       </ScrollView>
       {modalVisible && (
-        <CompartirQR visible={modalVisible} onClose={toggleModal} />
+        <CompartirQR
+          visible={modalVisible}
+          onClose={toggleModal}
+          transcriptionData={transcript} // Pasando datos al modal
+        />
       )}
       <Footer />
     </LinearGradient>

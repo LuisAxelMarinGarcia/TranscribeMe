@@ -23,6 +23,7 @@ const ViewTranscriptionsScreen = ({ route, navigation }: Props): React.JSX.Eleme
   const { className, teacherName, classCode, numberOfStudents, classId } = route.params;
   const [transcriptions, setTranscriptions] = useState<any[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedTranscription, setSelectedTranscription] = useState<any | null>(null);
 
   useEffect(() => {
     const fetchTranscriptions = async () => {
@@ -57,7 +58,8 @@ const ViewTranscriptionsScreen = ({ route, navigation }: Props): React.JSX.Eleme
     fetchTranscriptions();
   }, [classId]);
 
-  const toggleModal = () => {
+  const toggleModal = (transcription: any | null) => {
+    setSelectedTranscription(transcription);
     setModalVisible(!modalVisible);
   };
 
@@ -87,7 +89,7 @@ const ViewTranscriptionsScreen = ({ route, navigation }: Props): React.JSX.Eleme
             </View>
             <View style={styles.transcriptIcons}>
               <Icon name="calendar" size={20} color="gray" style={{ marginHorizontal: 5 }} />
-              <TouchableOpacity onPress={toggleModal}>
+              <TouchableOpacity onPress={() => toggleModal(transcription)}>
                 <Icon name="share-alt" size={20} color="gray" />
               </TouchableOpacity>
             </View>
@@ -104,7 +106,13 @@ const ViewTranscriptionsScreen = ({ route, navigation }: Props): React.JSX.Eleme
           <Text style={styles.transcriptionButtonText}>Iniciar Transcripción</Text>
         </TouchableOpacity>
       </ScrollView>
-      <CompartirQR visible={modalVisible} onClose={toggleModal} />
+      {modalVisible && (
+        <CompartirQR 
+          visible={modalVisible} 
+          onClose={() => toggleModal(null)} 
+          transcriptionData={selectedTranscription} 
+        />
+      )}
       <Footer />
     </LinearGradient>
   );
